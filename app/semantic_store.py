@@ -1,3 +1,4 @@
+import logging
 import threading
 from typing import Optional
 
@@ -7,6 +8,7 @@ from sentence_transformers import SentenceTransformer
 
 
 MODEL_PATH = "./models/all-MiniLM-L6-v2"
+logger = logging.getLogger(__name__)
 
 
 class SemanticStore:
@@ -27,6 +29,12 @@ class SemanticStore:
             scores, ids = self._index.search(embedding, k=1)
             best_id = int(ids[0][0])
             best_score = float(scores[0][0])
+            logger.info(
+                "Semantic search score=%0.4f threshold=%0.4f faiss_id=%s",
+                best_score,
+                threshold,
+                best_id,
+            )
 
             if best_id == -1 or best_score < threshold:
                 return None
